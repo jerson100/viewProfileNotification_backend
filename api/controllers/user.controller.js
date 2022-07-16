@@ -25,7 +25,7 @@ const login = async (username, password) => {
   const us = await User.findOne({ username, password });
   if (!us) throw new AuthenticationUserException();
   return {
-    _id: us._doc.id,
+    _id: us._doc._id,
     username: us._doc.username,
   };
 };
