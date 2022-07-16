@@ -1,17 +1,22 @@
 const express = require("express");
+const cors = require("cors");
 const connectDB = require("./api/configs/mongodb");
 require("dotenv").config();
 const { createServer } = require("http");
 const { Server } = require("socket.io");
 const UserRouter = require("./api/routers/user.router");
+const AuthRouter = require("./api/routers/auth.router");
 
 const app = express();
 
 connectDB();
 
+app.use(cors());
+
 app.use(express.json());
 
 app.use(`/api/${process.env.API_VERSION}/users`, UserRouter);
+app.use(`/api/${process.env.API_VERSION}/auth`, AuthRouter);
 
 const httpServer = createServer(app);
 const io = new Server(httpServer, {});

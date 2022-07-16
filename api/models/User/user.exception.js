@@ -6,4 +6,12 @@ class UserCreateException extends Error {
   }
 }
 
-module.exports = UserCreateException;
+class AuthenticationUserException extends Error {
+  constructor(msg = "Usuario o contraseña incorrecta", status = 401) {
+    super(msg);
+    this.status = status;
+    this.name = "AuthenticationUserException";
+  }
+}
+
+module.exports = { UserCreateException, AuthenticationUserException };

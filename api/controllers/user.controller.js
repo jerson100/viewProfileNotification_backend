@@ -1,4 +1,7 @@
-const UserCreateException = require("../models/User/user.exception");
+const {
+  AuthenticationUserException,
+  UserCreateException,
+} = require("../models/User/user.exception");
 const User = require("../models/User/user.model");
 
 const createUser = async ({ name, username, password, description }) => {
@@ -18,6 +21,15 @@ const createUser = async ({ name, username, password, description }) => {
   }
 };
 
+const login = async (username, password) => {
+  const us = await User.findOne({ username, password });
+  if (!us) throw new AuthenticationUserException();
+  return {
+    _id: us._doc.id,
+    username: us._doc.username,
+  };
+};
+
 const allUsers = async () => {
   const users = await User.find();
   return users;
@@ -25,5 +37,6 @@ const allUsers = async () => {
 
 module.exports = {
   createUser,
+  login,
   allUsers,
 };
