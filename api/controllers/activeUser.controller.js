@@ -51,7 +51,19 @@ const getActiveUsers = async (idUser) => {
   ]);
 };
 
+const deleteByRoomActiveUser = async (room) => {
+  const deletedActiveUser = await ActiveUser.findOneAndDelete({
+    room: room,
+  }).populate("idUser", "_id name username");
+  return {
+    _id: deletedActiveUser._doc._id,
+    user: { ...deletedActiveUser._doc.idUser._doc },
+    room: room,
+  };
+};
+
 module.exports = {
   getActiveUsers,
   createActiveUser,
+  deleteByRoomActiveUser,
 };

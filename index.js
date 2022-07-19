@@ -30,37 +30,33 @@ app.use(`/api/${process.env.API_VERSION}/auth`, AuthRouter);
 io.on("connection", (socket) => {
   //socket.emit("connect", "bienvenido usuario");
   socket.on("login", async (data) => {
-    //   almacenar en la bd el usuario como activo
-    const newUser = await UserController.createActiveUser({
+    await UserController.createActiveUser({
       idUser: data.user._id,
       room: data.room,
     });
 
-    // socket.broadcast.emit("activeUser", newUser);
-
     const users = await UserController.getActiveUsers(data.user._id);
 
-    socket.emit("getActiveUsers", users);
-
     for (let i = 0; i < users.length; i++) {
-      socket.to(users[i].room).emit("activeUser", {
+      socket.to(users[i].room).emit("newActiveUser", {
         room: data.room,
         user: data.user,
       });
     }
   });
 
-  //   socket.on("disconnect", function () {
-  //     console.log("Got disconnect!");
-  //     var i = allClients.indexOf(socket.id);
-  //     allClients.splice(i, 1);
-  //   });
+  socket.on("getActiveUsers", async (idUser, cb) => {
+    const users = await UserController.getActiveUsers(idUser);
+    cb(users);
+  });
 
-  //   socket.on("getActiveUsers", async (cb) => {
-  //nos conectamos con la base de datos y obtenemos todos los registros de los usuarios activos en el sistema
-  // console.log("get users");
-  // cb(users);
-  //   });
+  socket.on("disconnect", async () => {
+    const deletedActiveUser = await UserController.deleteByRoomActiveUser(
+      socket.id
+    );
+    socket.broadcast.emit("deletedActiveUser", deletedActiveUser);
+    // console.log("usuario eliminado", deletedActiveUser);
+  });
 });
 
 httpServer.listen(process.env.PORT, {}, () => {
