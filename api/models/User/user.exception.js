@@ -6,6 +6,14 @@ class UserCreateException extends Error {
   }
 }
 
+class UserNotFound extends Error {
+  constructor(msg = "El usuario no se encontró", status = 404) {
+    super(msg);
+    this.name = "UserNotFound";
+    this.status = status;
+  }
+}
+
 class AuthenticationUserException extends Error {
   constructor(msg = "Usuario o contraseña incorrecta", status = 401) {
     super(msg);
@@ -14,4 +22,8 @@ class AuthenticationUserException extends Error {
   }
 }
 
-module.exports = { UserCreateException, AuthenticationUserException };
+module.exports = {
+  UserCreateException,
+  AuthenticationUserException,
+  UserNotFound,
+};

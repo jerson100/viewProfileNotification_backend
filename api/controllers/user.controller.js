@@ -4,6 +4,16 @@ const {
 } = require("../models/User/user.exception");
 const User = require("../models/User/user.model");
 
+const findUser = async (idUser) => {
+  const us = await User.findOne({ _id: idUser });
+  return us;
+};
+
+const findUserByUsername = async (username) => {
+  const us = await User.findOne({ username: username });
+  return us;
+};
+
 const createUser = async ({ name, username, password, description }) => {
   const us = await User.findOne({ username });
   if (!us) {
@@ -39,4 +49,6 @@ module.exports = {
   createUser,
   login,
   allUsers,
+  findUser,
+  findUserByUsername,
 };

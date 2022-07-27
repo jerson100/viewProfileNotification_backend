@@ -9,13 +9,17 @@ const createActiveUser = async (us) => {
   return newUser;
 };
 
-const getActiveUsers = async (idUser) => {
+const getActiveUsers = async (idUser, distinc = true) => {
   return await ActiveUser.aggregate([
     {
       $match: {
-        idUser: {
-          $ne: new ObjectId(idUser),
-        },
+        idUser: distinc
+          ? {
+              $ne: new ObjectId(idUser),
+            }
+          : {
+              $eq: new ObjectId(idUser),
+            },
       },
     },
     {
@@ -55,11 +59,13 @@ const deleteByRoomActiveUser = async (room) => {
   const deletedActiveUser = await ActiveUser.findOneAndDelete({
     room: room,
   }).populate("idUser", "_id name username");
-  return {
-    _id: deletedActiveUser._doc._id,
-    user: { ...deletedActiveUser._doc.idUser._doc },
-    room: room,
-  };
+  return (
+    deletedActiveUser && {
+      _id: deletedActiveUser._doc._id,
+      user: { ...deletedActiveUser._doc.idUser._doc },
+      room: room,
+    }
+  );
 };
 
 module.exports = {
